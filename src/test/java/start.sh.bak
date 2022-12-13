@@ -1,0 +1,5 @@
+#!/bin/bash
+
+javac -cp amqp-client-5.7.1.jar Consumer.java Producer.javaj
+ 
+ 
