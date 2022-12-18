@@ -4,8 +4,10 @@
 package core;
 
 import core.interfaces.PersonDao;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.junit.jupiter.api.Test;
 
 import javax.management.Query;
 import java.util.List;
@@ -54,4 +56,6 @@ public class HibernatePersonDao implements PersonDao {
     public List<Person> findByLastname(String lastname) {
         return null;
     }
+
+
 }

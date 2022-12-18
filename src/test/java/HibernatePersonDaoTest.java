@@ -1,7 +1,9 @@
 import core.HibernatePersonDao;
 import core.Person;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.boot.cfgxml.internal.CfgXmlAccessServiceImpl;
 import org.hibernate.classic.Session;
 import org.hibernate.classic.SessionFactory;
 import static org.easymock.EasyMock.*;
@@ -18,6 +20,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.internal.util.MockUtil.createMock;
 
 /**
@@ -79,6 +82,35 @@ private Query query;
     expect(statement.executeQuery()).andReturn(resultSet);
     }
 
+
+
+    @Test
+    public void testFindByLastNameReturnsEmptyListUponException()
+            throws Exception {
+        String hql = "from Person p where p.lastname = :lastname";
+        String name = "Smith";
+        HibernateException hibernateError = new HibernateException("");
+
+        expect(factory.getCurrentSession()).andReturn(session);
+        expect(session.createQuery(hql)).andReturn(query);
+        expect(query.setParameter("lastname",name)).andReturn(query);
+        expect(query.list()).andThrow(hibernateError);
+
+        replay(factory,session,query);
+
+        HibernatePersonDao dao = new HibernatePersonDao();
+
+        dao.setSessionFactory(factory);
+        try {
+            dao.findbyLastName(name);
+            fail( "should ' ve thrown an exception*");
+
+        }catch (RuntimeException expected){
+            Assertions.assertSame(hibernateError,expected.getCause());
+        }
+
+        verify(factory,session,query);
+    }
 }
 
 
